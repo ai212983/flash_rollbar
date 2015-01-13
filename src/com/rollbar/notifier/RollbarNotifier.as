@@ -1,14 +1,9 @@
 package com.rollbar.notifier {
 
     import flash.display.Sprite;
-    import flash.display.LoaderInfo;
-
-    import flash.errors.IllegalOperationError;
 
     import flash.events.Event;
     import flash.events.ErrorEvent;
-    import flash.events.EventDispatcher;
-    import flash.events.HTTPStatusEvent;
     import flash.events.IOErrorEvent;
     import flash.events.IEventDispatcher;
     import flash.events.SecurityErrorEvent;
@@ -20,7 +15,6 @@ package com.rollbar.notifier {
     import flash.net.URLLoaderDataFormat;
     import flash.net.URLRequest;
     import flash.net.URLRequestMethod;
-    import flash.net.URLVariables;
 
     import flash.system.Capabilities;
     import flash.system.System;
@@ -203,25 +197,28 @@ package com.rollbar.notifier {
             }
         }
 
-        private function getEmbeddedUrl():String {
+        private static function getEmbeddedUrl():String {
             if (ExternalInterface.available) {
-                return ExternalInterface.call("window.location.href.toString");
+                try { return ExternalInterface.call("window.location.href.toString"); }
+                catch(e:SecurityError) { return "external-interface-security-error"; }
             }
-            return null;
+            return "external-interface-not-available";
         }
 
-        private function getQueryString():String {
+        private static function getQueryString():String {
             if (ExternalInterface.available) {
-                return ExternalInterface.call("window.location.search.substring", 1);
+                try { return ExternalInterface.call("window.location.search.substring", 1); }
+                catch(e:SecurityError) { return "external-interface-security-error"; }
             }
-            return null;
+            return "external-interface-not-available";
         }
 
-        private function getBrowserUserAgent():String {
+        private static function getBrowserUserAgent():String {
             if (ExternalInterface.available) {
-                return ExternalInterface.call("window.navigator.userAgent.toString");
+                try { return ExternalInterface.call("window.navigator.userAgent.toString"); }
+                catch(e:SecurityError) { return "external-interface-security-error"; }
             }
-            return null;
+            return "external-interface-not-available";
         }
 
         /**
