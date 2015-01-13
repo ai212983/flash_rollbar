@@ -1,4 +1,4 @@
-package com.rollbar.tests {
+package {
     import flash.display.Sprite;
 
     import flash.events.Event;
