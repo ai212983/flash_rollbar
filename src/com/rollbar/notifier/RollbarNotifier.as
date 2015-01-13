@@ -37,8 +37,6 @@ package com.rollbar.notifier {
         private static const NOTIFIER_DATA:Object = {name: "flash_rollbar", version: "0.9.2"};
         private static const MAX_ITEM_COUNT:int = 5;
 
-        private static var instance:RollbarNotifier = null;
-        
         // Keep URLLoaders from being garbage collected before they finish
         private var loaders:Array;
 
@@ -54,7 +52,6 @@ package com.rollbar.notifier {
         private var personFn:Function;
         private var userId:String;
         private var person:Object;
-        private var startTime:int;
         private var branch:String;
         private var rootPath:String;
         private var srcPath:String;
@@ -78,7 +75,7 @@ package com.rollbar.notifier {
             this.rootPath = rootPath;
             this.srcPath = srcPath;
             
-            this.loaders = new Array();
+            this.loaders = [];
 
             if (person) {
                 if (person is Function) {
@@ -106,8 +103,7 @@ package com.rollbar.notifier {
             });
         }
 
-        public function dispose():void {
-        }
+        public function dispose():void {}
 
         public function handleError(err:Error, extraData:Object = null):String {
             var stackTrace:String = err.getStackTrace();
@@ -143,7 +139,7 @@ package com.rollbar.notifier {
                 return handleErrorEvent(errorEvent);
             } else {
                 // Inform the user that a non-error event was thrown and not caught.
-                return handleOtherEvent(event);
+                return handleOtherEvent(event.error);
             }
         }
 
@@ -182,7 +178,7 @@ package com.rollbar.notifier {
                     loader.removeEventListener(Event.COMPLETE, handler);
                     
                     dispatchEvent(event);
-                }
+                };
                 
                 loader.addEventListener(SecurityErrorEvent.SECURITY_ERROR, handler);
                 loader.addEventListener(IOErrorEvent.IO_ERROR, handler);
@@ -262,7 +258,7 @@ package com.rollbar.notifier {
             return payload;
         }
 
-        private function resolveField(fieldNames:Array, storage:Object):String {
+        private static function resolveField(fieldNames:Array, storage:Object):String {
             var index:Number;
             var len:Number = fieldNames.length;
             for (index = 0; index < len; ++index) {
